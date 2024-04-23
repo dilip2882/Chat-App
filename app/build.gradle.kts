@@ -1,10 +1,17 @@
 plugins {
     alias(libs.plugins.androidApplication)
+
+//    id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.dilip.chatapp"
     compileSdk = 34
+
+    buildFeatures {
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId = "com.dilip.chatapp"
@@ -31,6 +38,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation(libs.appcompat)
@@ -40,4 +48,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.github.mukeshsolanki.android-otpview-pinview:otpview:3.1.0")
+
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-storage")
 }
