@@ -2,7 +2,9 @@ package com.dilip.chatapp;
 
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -26,33 +28,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         // Set Toolbar
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("Chat App");
 
         // Initialize ViewPager
-//        viewPager = findViewById(R.id.view_pager);
-
-        // Create Fragment List
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new ChatFragment());
         fragments.add(new UpdatesFragment());
         fragments.add(new CallsFragment());
-//        fragments.add(CallsFragment.newInstance()); // Assuming CallsFragment has a no-argument constructor
 
         // Create FragmentAdapter
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager(), fragments);
         binding.viewPager.setAdapter(adapter);
-//        view_pager.setAdapter(adapter);
 
-
-        /*
-         Set an onNavigationItemSelectedListener on BottomNavigationView.
-         Inside this listener, based on the selected item, programmatically switch the ViewPager to the corresponding fragment using its setCurrentItem() method.
-         */
+        // Set an onNavigationItemSelectedListener on BottomNavigationView
         binding.navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {  // Handle BottomNavigationView clicks
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.chats) {
                     binding.viewPager.setCurrentItem(0);
                     return true;
@@ -68,11 +62,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // Implement swipe listener
-        /*
-        added an OnPageChangeListener to the ViewPager to detect swipe events and update the selected item in the BottomNavigationView accordingly.
-         */
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -98,9 +88,32 @@ public class MainActivity extends AppCompatActivity {
                         return R.id.updates;
                     case 2:
                         return R.id.calls;
+                    default:
+                        return -1; // Handle potential out of bounds errors
                 }
-                return -1; // Handle potential out of bounds errors
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.search) {
+            Toast.makeText(this, "Search clicked.", Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId() == R.id.group) {
+            Toast.makeText(this, "Groups clicked.", Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId() == R.id.invite) {
+            Toast.makeText(this, "Invite clicked.", Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId() == R.id.setting) {
+            Toast.makeText(this, "Settings clicked.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Not Found", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
