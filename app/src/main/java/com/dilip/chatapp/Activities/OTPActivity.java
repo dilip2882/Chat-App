@@ -42,7 +42,9 @@ public class OTPActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
 
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         auth = FirebaseAuth.getInstance();
 

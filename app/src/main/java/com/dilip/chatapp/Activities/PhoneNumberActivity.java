@@ -29,7 +29,9 @@ public class PhoneNumberActivity extends AppCompatActivity {
             finish();
         }
 
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide(); // Only hide if the toolbar exists
+        }
 
         binding.phoneBox.requestFocus();
 
