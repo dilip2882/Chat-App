@@ -3,7 +3,7 @@ package com.dilip.chatapp.Models;
 public class Message {
     private String messageId, message, senderId;
     private long timestamp;
-    private int feeling;
+    private int feeling = -1;
 
     public Message() {
     }
@@ -14,7 +14,8 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public String getMessageId() {
+    public String getMessageId()
+    {
         return messageId;
     }
 

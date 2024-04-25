@@ -35,7 +35,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         messages = new ArrayList<>();
-        adapter = new MessagesAdapter(this, messages);
+        adapter = new MessagesAdapter(this, messages, senderRoom, receiverRoom);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
@@ -59,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
                                 messages.clear();
                                 for (DataSnapshot snapshot1: snapshot.getChildren()) {
                                     Message message = snapshot1.getValue(Message.class);
+                                    message.setMessageId(snapshot1.getKey());
                                     messages.add(message);
                                 }
                                 adapter.notifyDataSetChanged();
@@ -79,10 +80,12 @@ public class ChatActivity extends AppCompatActivity {
                 Message message = new Message(messageTxt, senderUid, date.getTime());
                 binding.messageBox.setText("");
 
+                String randomKey = database.getReference().push().getKey();
+
                 database.getReference().child("chats")
                         .child(senderRoom)
                         .child("messages")
-                        .push()
+                        .child(randomKey)
                         .setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -90,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
                                 database.getReference().child("chats")
                                         .child(receiverRoom)
                                         .child("messages")
-                                        .push()
+                                        .child(randomKey)
                                         .setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
