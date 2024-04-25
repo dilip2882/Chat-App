@@ -1,64 +1,69 @@
 package com.dilip.chatapp;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.dilip.chatapp.databinding.FragmentChatBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
 public class ChatFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    FragmentChatBinding binding; // View binding for the fragment
+    FirebaseDatabase database; // Firebase database instance
+    ArrayList<User> users; // List to store user data
+    UserAdapter userAdapter; // Adapter for user data
 
     public ChatFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChatFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChatFragment newInstance(String param1, String param2) {
-        ChatFragment fragment = new ChatFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false);
+        binding = FragmentChatBinding.inflate(getLayoutInflater());
+        View rootView = binding.getRoot(); // Get the root view from the binding
+
+        // Initialize the database
+        database = FirebaseDatabase.getInstance();
+
+        users = new ArrayList<>(); // Initialize the list to store user data
+
+        userAdapter = new UserAdapter(requireContext(), users); // Create the adapter
+/*        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));   // already mentioned in layout*/
+        binding.recyclerView.setAdapter(userAdapter); // Set the adapter to the RecyclerView
+
+        // Listen for changes in the "users" node in the database
+        database.getReference().child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                users.clear(); // Clear the existing user data
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    User user = snapshot1.getValue(User.class); // Deserialize user data
+                    users.add(user); // Add user to the list
+                }
+                userAdapter.notifyDataSetChanged(); // Notify adapter of data changes
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle database error
+            }
+        });
+
+        return rootView; // Return the inflated view
     }
 }
