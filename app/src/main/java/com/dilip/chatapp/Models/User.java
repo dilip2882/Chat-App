@@ -1,4 +1,4 @@
-package com.dilip.chatapp;
+package com.dilip.chatapp.Models;
 
 public class User {
 

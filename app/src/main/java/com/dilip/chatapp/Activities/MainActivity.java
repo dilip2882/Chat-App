@@ -1,4 +1,4 @@
-package com.dilip.chatapp;
+package com.dilip.chatapp.Activities;
 
 
 import android.os.Bundle;
@@ -12,6 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.dilip.chatapp.Fragments.CallsFragment;
+import com.dilip.chatapp.Fragments.ChatFragment;
+import com.dilip.chatapp.Adapters.FragmentAdapter;
+import com.dilip.chatapp.R;
+import com.dilip.chatapp.Fragments.UpdatesFragment;
 import com.dilip.chatapp.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 

@@ -1,4 +1,4 @@
-package com.dilip.chatapp;
+package com.dilip.chatapp.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,16 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.dilip.chatapp.Activities.ChatActivity;
+import com.dilip.chatapp.R;
+import com.dilip.chatapp.Models.User;
 import com.dilip.chatapp.databinding.RowConversationBinding;
 
 import java.util.ArrayList;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
 
     Context context;
     ArrayList<User> users;
 
-    public UserAdapter(Context context, ArrayList<User> users) {
+    public UsersAdapter(Context context, ArrayList<User> users) {
         this.context = context;
         this.users = users;
 

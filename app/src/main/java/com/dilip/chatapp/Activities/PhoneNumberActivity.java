@@ -1,4 +1,4 @@
-package com.dilip.chatapp;
+package com.dilip.chatapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,25 +1,31 @@
-package com.dilip.chatapp;
+package com.dilip.chatapp.Activities;
 
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.dilip.chatapp.Adapters.MessagesAdapter;
+import com.dilip.chatapp.Models.Message;
 import com.dilip.chatapp.databinding.ActivityChatBinding;
+
+import java.util.ArrayList;
 
 public class ChatActivity extends AppCompatActivity {
 
     private ActivityChatBinding binding;
+    MessagesAdapter adapter;
+    ArrayList<Message> messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        messages = new ArrayList<>();
+        adapter = new MessagesAdapter(this, messages);
+
 
         String name = getIntent().getStringExtra("name");
         String uid = getIntent().getStringExtra("uid");
