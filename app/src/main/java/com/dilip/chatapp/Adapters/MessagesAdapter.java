@@ -17,34 +17,23 @@ import com.github.pgreze.reactions.ReactionPopup;
 import com.github.pgreze.reactions.ReactionsConfig;
 import com.github.pgreze.reactions.ReactionsConfigBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+
 public class MessagesAdapter extends RecyclerView.Adapter {
 
-    // Context needed for layout inflation and potentially other operations
     Context context;
-
-    // List of messages to be displayed in the adapter
     ArrayList<Message> messages;
 
-    // Constants representing message types (sent by user or received)
     final int ITEM_SENT = 1;
     final int ITEM_RECEIVE = 2;
 
-    // Room IDs for sender and receiver used for storing messages in Firebase
     String senderRoom;
     String receiverRoom;
 
-    /**
-     * Constructor for MessagesAdapter
-     *
-     * @param context  The context for layout inflation
-     * @param messages The list of messages to display
-     * @param senderRoom The room ID for the sender
-     * @param receiverRoom The room ID for the receiver
-     */
     public MessagesAdapter(Context context, ArrayList<Message> messages, String senderRoom, String receiverRoom) {
         this.context = context;
         this.messages = messages;
@@ -52,55 +41,32 @@ public class MessagesAdapter extends RecyclerView.Adapter {
         this.receiverRoom = receiverRoom;
     }
 
-    /**
-     * Creates a new ViewHolder instance based on the view type
-     *
-     * @param parent   The ViewGroup into which the new View will be added
-     * @param viewType The type of view (sent or received message)
-     * @return A new ViewHolder that holds the view for the message
-     */
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == ITEM_SENT) {
-            // Inflate the layout for sent messages
+        if(viewType == ITEM_SENT) {
             View view = LayoutInflater.from(context).inflate(R.layout.item_sent, parent, false);
             return new SentViewHolder(view);
         } else {
-            // Inflate the layout for received messages
             View view = LayoutInflater.from(context).inflate(R.layout.item_receive, parent, false);
             return new ReceiverViewHolder(view);
         }
     }
 
-    /**
-     * Determines the view type for a given message position
-     *
-     * @param position The position of the message in the list
-     * @return The view type (sent or received)
-     */
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        // Check if the message sender ID matches the current user ID
-        if (FirebaseAuth.getInstance().getUid().equals(message.getSenderId())) {
+        if(FirebaseAuth.getInstance().getUid().equals(message.getSenderId())) {
             return ITEM_SENT;
         } else {
             return ITEM_RECEIVE;
         }
     }
 
-    /**
-     * Binds the message data to the ViewHolder views
-     *
-     * @param holder   The ViewHolder that holds the views for the message
-     * @param position The position of the message in the list
-     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
 
-        // Define an array of reaction image resource IDs
         int[] reactions = new int[]{
                 R.drawable.ic_fb_like,
                 R.drawable.ic_fb_love,
@@ -110,30 +76,30 @@ public class MessagesAdapter extends RecyclerView.Adapter {
                 R.drawable.ic_fb_angry
         };
 
-        // Build the reaction configuration with available reactions
         ReactionsConfig config = new ReactionsConfigBuilder(context)
                 .withReactions(reactions)
                 .build();
 
-        // Create a reaction popup instance
         ReactionPopup popup = new ReactionPopup(context, config, (pos) -> {
-            if (holder.getClass() == SentViewHolder.class) {
-                SentViewHolder viewHolder = (SentViewHolder) holder;
-                // Set the reaction image and make it visible
+
+            if(pos < 0) {
+                return false;
+            }
+
+            if(holder.getClass() == SentViewHolder.class) {
+                SentViewHolder viewHolder = (SentViewHolder)holder;
                 viewHolder.binding.feeling.setImageResource(reactions[pos]);
                 viewHolder.binding.feeling.setVisibility(View.VISIBLE);
             } else {
-                ReceiverViewHolder viewHolder = (ReceiverViewHolder) holder;
-                // Set the reaction image and make it visible
+                ReceiverViewHolder viewHolder = (ReceiverViewHolder)holder;
                 viewHolder.binding.feeling.setImageResource(reactions[pos]);
                 viewHolder.binding.feeling.setVisibility(View.VISIBLE);
-            }
 
-            // Update the message's feeling state
+            }
             message.setFeeling(pos);
 
             // Update both sender and receiver message nodes in Firebase with the latest message data
-            FirebaseDatabase.getInstance().getReference()
+  /*          FirebaseDatabase.getInstance().getReference()
                     .child("chats")
                     .child(senderRoom)
                     .child("messages")
@@ -143,27 +109,52 @@ public class MessagesAdapter extends RecyclerView.Adapter {
                     .child("chats")
                     .child(receiverRoom)
                     .child("messages")
-                    .child(message.getMessageId()).setValue(message);
+                    .child(message.getMessageId()).setValue(message);*/   // Gives NullPointerException
+
+            String senderRef = "chats/" + senderRoom + "/messages/" + message.getMessageId();
+            String receiverRef = "chats/" + receiverRoom + "/messages/" + message.getMessageId();
+
+            // Save message to sender's room
+            if (senderRef != null) {
+                FirebaseDatabase.getInstance().getReference().child(senderRef).setValue(message);
+            }
+
+            // Save message to receiver's room
+            if (receiverRef != null) {
+                FirebaseDatabase.getInstance().getReference().child(receiverRef).setValue(message);
+            }
 
             return true; // true is closing popup, false is requesting a new selection
         });
 
+
+        // Check the ViewHolder type (Sent or Receiver)
         if (holder.getClass() == SentViewHolder.class) {
+            // Cast the holder to SentViewHolder for specific binding access
             SentViewHolder viewHolder = (SentViewHolder) holder;
+
+            // Set the message text
             viewHolder.binding.message.setText(message.getMessage());
 
+            // Check if the message has a feeling set (position >= 0)
             if (message.getFeeling() >= 0) {
 //                message.setFeeling(reactions[(int) message.getFeeling()]);
-                viewHolder.binding.feeling.setImageResource(reactions[message.getFeeling()]);
+                // Update the feeling image based on the position stored in the message
+                viewHolder.binding.feeling.setImageResource(reactions[(int) message.getFeeling()]);
+                // Make the feeling image visible
                 viewHolder.binding.feeling.setVisibility(View.VISIBLE);
             } else {
+                // Hide the feeling image if no feeling is set
                 viewHolder.binding.feeling.setVisibility(View.GONE);
             }
 
+            // Set a touch listener on the message view
             viewHolder.binding.message.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    // Delegate touch handling to the popup for reaction selection
                     popup.onTouch(v, event);
+                    // Consume the touch event to prevent further processing
                     return false;
                 }
             });
@@ -173,7 +164,7 @@ public class MessagesAdapter extends RecyclerView.Adapter {
             viewHolder.binding.message.setText(message.getMessage());
 
             if (message.getFeeling() >= 0) {
-                viewHolder.binding.feeling.setImageResource(reactions[message.getFeeling()]);
+                viewHolder.binding.feeling.setImageResource(reactions[(int) message.getFeeling()]);
                 viewHolder.binding.feeling.setVisibility(View.VISIBLE);
             } else {
                 viewHolder.binding.feeling.setVisibility(View.GONE);
@@ -207,6 +198,7 @@ public class MessagesAdapter extends RecyclerView.Adapter {
     public class ReceiverViewHolder extends RecyclerView.ViewHolder {
 
         ItemReceiveBinding binding;
+
         public ReceiverViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = ItemReceiveBinding.bind(itemView);
