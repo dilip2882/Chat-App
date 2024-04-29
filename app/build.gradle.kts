@@ -57,4 +57,10 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("com.github.pgreze:android-reactions:1.6")}
+    implementation("com.github.pgreze:android-reactions:1.6")
+    implementation("com.github.3llomi:CircularStatusView:V1.0.3")
+    implementation("com.github.bxute:StoryView:v1.0")
+    implementation("com.github.OMARIHAMZA:StoryView:1.0.2-alpha")
+    implementation("com.github.sharish:ShimmerRecyclerView:v1.3")
+
+}

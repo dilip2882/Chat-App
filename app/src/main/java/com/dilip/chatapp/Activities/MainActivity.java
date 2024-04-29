@@ -1,6 +1,9 @@
 package com.dilip.chatapp.Activities;
 
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -8,6 +11,7 @@ import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -15,12 +19,21 @@ import androidx.viewpager.widget.ViewPager;
 import com.dilip.chatapp.Fragments.CallsFragment;
 import com.dilip.chatapp.Fragments.ChatFragment;
 import com.dilip.chatapp.Adapters.FragmentAdapter;
+import com.dilip.chatapp.Models.User;
+import com.dilip.chatapp.Models.UserStatus;
 import com.dilip.chatapp.R;
 import com.dilip.chatapp.Fragments.UpdatesFragment;
 import com.dilip.chatapp.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
