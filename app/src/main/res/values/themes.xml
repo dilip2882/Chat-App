@@ -2,7 +2,7 @@
     <style name="Base.Theme.ChatApp" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryVariant">@color/greenDark</item>
-        <item name="colorOnPrimary">@color/greenDark</item>
+        <item name="colorOnPrimary">@color/Azure</item>
         <item name="colorSecondary">@color/green</item>
         <item name="colorSecondaryVariant">@color/greenDark</item>
         <item name="colorOnSecondary">@color/black</item>

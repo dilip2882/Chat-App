@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="CountryCodes">
+        <item>+1,US</item> <item>+44,GB</item> <item>+91,IN</item> <item>+86,CN</item> </string-array>
+</resources>
